@@ -1,12 +1,9 @@
-try:
-	from numpy import pi, sqrt, append, array, arange, cumsum, load
-except:
-	print 'cant find numpy'
-try:
-	from scipy.integrate import ode
-	from scipy.interpolate import interp1d
-except:
-	print 'cant find scipy'
+
+from numpy import pi, sqrt, append, array, arange, cumsum, load
+#from numpy import array
+from scipy.integrate import ode
+from scipy.interpolate import interp1d
+
 
 
 class background():
@@ -135,4 +132,12 @@ class background():
 				return True
 		except:
 			return False
+
+
+
+def get_background_hubble(*args, **kwargs):
+	background_class_instance = background(args, kwargs)
+	hubble = background_class_instance.hubble
+
+	return hubble
 

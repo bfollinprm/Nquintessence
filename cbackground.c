@@ -1,12 +1,11 @@
 #include <Python.h>
-
 int main(
 	int argc,
 	char *argv[]
 	)
 
 {
-	PyObject *py_module_BackgroundLinker, *py_dict_BackgroundLinkerAttributes, *py_func_GetBackgroundHubble, *py_tuple_Function_Args;
+	PyObject *py_module_Background, *py_dict_BackgroundLinkerAttributes, *py_func_GetBackgroundHubble, *py_tuple_Function_Args;
 	PyObject *py_func_Hubble, *py_float_HubbleAtZ, *py_tuple_Hubble_Args;
 	int check;
 	Py_ssize_t ii;
@@ -14,21 +13,25 @@ int main(
 
 	Py_Initialize();
 	//include local path
-	PySys_SetPath(".");
+	PyObject *sys = PyImport_ImportModule("sys");
+	PyObject *path = PyObject_GetAttrString(sys, "path");
+	PyList_Append(path, PyString_FromString("."));
 
-	//import background_linker as py_module_BackgroundLinker
-	py_module_BackgroundLinker = PyImport_ImportModuleNoBlock("background_linker");
-	printf("imported background_linker\n");
+	//PySys_SetPath(".");
+	//PySys_SetPath("/Users/follin/projects/anaconda/lib/python2.7/site-packages/");
 
-	py_dict_BackgroundLinkerAttributes = PyModule_GetDict(py_module_BackgroundLinker);
+	//import background_linker as py_module_Background
+	py_module_Background = PyImport_ImportModule("background");
+
+
+	py_dict_BackgroundLinkerAttributes = PyModule_GetDict(py_module_Background);
 	if (!PyDict_Contains(py_dict_BackgroundLinkerAttributes, PyString_FromString("get_background_hubble")))
 	{
 		printf("function 'get_background_hubble' not found \n");
 		return 1;		
 	}
-	//py_funce_GetBackgroundHubble = py_module_BackgroundLinker.get_background_hubble
+	//py_funce_GetBackgroundHubble = py_module_Background.get_background_hubble
 	py_func_GetBackgroundHubble = PyDict_GetItemString(py_dict_BackgroundLinkerAttributes, "get_background_hubble");
-	printf("loaded get_background_hubble method\n");
 
 
 
@@ -50,7 +53,6 @@ int main(
 		}
 
 	}
-	printf("prepared function arguments\n");
 
 	if (!PyCallable_Check(py_func_GetBackgroundHubble))
 	{
@@ -60,7 +62,6 @@ int main(
 	
 	//py_func_hubble = get_background_hubble(*py_tuple_function_args)
 	py_func_Hubble = PyObject_Call(py_func_GetBackgroundHubble, py_tuple_Function_Args, NULL);
-	printf("Called get_background_hubble\n");
 
 	if (!PyCallable_Check(py_func_Hubble))
 	{
@@ -76,16 +77,15 @@ int main(
 		printf("Setting Tuple Value failed\n");
 		return 1;
 	}
-	printf("Prepared hubble argument\n");
 
 	py_float_HubbleAtZ = PyObject_CallObject(py_func_Hubble, NULL);
-	if (!py_float_HubbleAtZ)
+	if (py_float_HubbleAtZ == NULL)
 	{
 		printf("Call to hubble function failed\n");
+		PyErr_Print();
 		return 1;
 	}
 
-	printf("Called hubble(15)\n");
 
 	HubbleAtZ = PyFloat_AsDouble(py_float_HubbleAtZ);
 	printf("We successully returned hubble(15) = %f\n", HubbleAtZ);
