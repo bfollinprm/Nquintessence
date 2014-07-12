@@ -44,11 +44,13 @@ class background():
 			return hubble
 		else:
 			if hasattr(self, 'hubble_func') == True:
-				return self.hubble_func(z).tolist()
+				H =  self.hubble_func(z).tolist()
+				return H
 			else:
 				##We need to do the integration
 				self.hubble_func = self.calc_hubble_rate()
-				return self.hubble_func(z).tolist()
+				H = self.hubble_func(z).tolist()
+				return H
 
 	def calc_hubble_rate(self):
 		y0 = array([self.z0, self.cosmo['chi0'], 0])

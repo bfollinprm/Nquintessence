@@ -79,13 +79,14 @@ int main(
 	printf("Prepared hubble argument\n");
 
 	py_float_HubbleAtZ = PyObject_CallObject(py_func_Hubble, py_tuple_Hubble_Args);
-	printf("Called hubble(15)\n");
-
-	if (!PyFloat_Check(py_float_HubbleAtZ))
+	if (!py_float_HubbleAtZ)
 	{
-		printf("We didn't return a float object on call to hubble()\n");
+		printf("Call to hubble function failed")
 		return 1;
 	}
+
+	printf("Called hubble(15)\n");
+
 	HubbleAtZ = PyFloat_AsDouble(py_float_HubbleAtZ);
 	printf("We successully returned hubble(15) = %f\n", HubbleAtZ);
 	Py_Finalize();
