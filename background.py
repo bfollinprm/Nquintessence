@@ -69,7 +69,7 @@ class background():
 		hubble_array = array(hlist)[::-1]
 		redshift_array = array(zlist)[::-1]
 		##Interpolate
-		hubble_interpolated_func = interp1d(redshift_array, hubble_array, kind ='linear', copy = False, assume_sorted = True)
+		hubble_interpolated_func = interp1d(redshift_array, hubble_array, kind ='linear', copy = False)#, assume_sorted = True)
 
 		return hubble_interpolated_func
 
