@@ -69,7 +69,7 @@ def get_model(**CMB_parameters):
 	model.compute()
 	###this changes what H0 is
 	CMB_parameters['H0_true'] = model.Hubble(0) * 1e5
-	derived_parameters = ['age', 'z_reio', 'z_rec','rs_rec','100*theta_s', 'YHe', 'sigma8']
+	derived_parameters = ['age', 'z_reio', 'z_rec','rs_rec','100*theta_s', 'YHe', 'sigma8', 'rs_drag']
 	for key in derived_parameters:
 	CMB_parameters[key] = model.get_current_derived_parameters(derived_parameters)
 	CMB_parameters['age'] = model.age()
@@ -77,8 +77,8 @@ def get_model(**CMB_parameters):
 	CMB_parameters['clTT'] = model.lensed_cls(3000)['tt'] * _ell * (_ell + 1) * (1.0e6*model.Tcmb())**2
 
 	###### ADD MORE REQUIRED NUMBERS HERE, e.g. below ######
-	CMB_parameters['H057'] = model.Hubble(0.57)
-	CMB_parameters['DA057'] = model.angular_diameter_distance(0.57)
+	CMB_parameters['H057'] = model.Hubble(0.57) * 1e5
+	CMB_parameters['DA057'] = model.angular_diameter_distance(0.57) ## In Mpc
 
 	return CMB_parameters
 
