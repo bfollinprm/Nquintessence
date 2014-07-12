@@ -1,7 +1,7 @@
 
 from numpy import pi, sqrt, append, array, arange, cumsum, load
 #from numpy import array
-from scipy.integrate import ode
+from scipy.integrate import ode, quad
 from scipy.interpolate import interp1d
 
 
@@ -55,6 +55,10 @@ class background():
 				self.hubble_func = self.calc_hubble_rate()
 				H = self.hubble_func(z).tolist()
 				return H
+
+	def angular_diameter_distance(self, z):
+		Da = 1/(1+z) * quad(lambda x: 1.0/self.hubble(x), 0, z)[0]
+		return Da
 
 	def calc_hubble_rate(self):
 		y0 = array([self.z0, self.cosmo['chi0'], 0])
