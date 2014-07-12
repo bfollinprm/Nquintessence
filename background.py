@@ -38,7 +38,9 @@ class background():
 			self.step = step
 		except:
 			self.step = 0.005 ## per hubble time
-	def hubble(self,z):
+	def hubble(self,*args):
+		if args:
+			z = args[0]
 		if (self.cosmo['chi0'] == 0) or (z > self.z0):
 			hubble = self.cosmo['H0_guess'] * sqrt(self.cosmo['Omega_m'] * (1+z)**3 + self.cosmo['Omega_rad'] * (1+z)**4 + self.cosmo['Omega_L'])
 			return hubble
