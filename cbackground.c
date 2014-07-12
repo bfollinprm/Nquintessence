@@ -78,7 +78,7 @@ int main(
 	}
 	printf("Prepared hubble argument\n");
 
-	py_float_HubbleAtZ = PyObject_CallObject(py_func_Hubble, py_tuple_Hubble_Args);
+	py_float_HubbleAtZ = PyObject_CallObject(py_func_Hubble, NULL);
 	if (!py_float_HubbleAtZ)
 	{
 		printf("Call to hubble function failed\n");
