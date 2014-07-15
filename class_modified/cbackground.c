@@ -15,7 +15,7 @@ int main(
 	//include local path
 	PyObject *sys = PyImport_ImportModule("sys");
 	PyObject *path = PyObject_GetAttrString(sys, "path");
-	PyList_Append(path, PyString_FromString("."));
+	PyList_Append(path, PyString_FromString("./source"));
 
 	//PySys_SetPath(".");
 	//PySys_SetPath("/Users/follin/projects/anaconda/lib/python2.7/site-packages/");
@@ -37,8 +37,6 @@ int main(
 
 	py_tuple_Function_Args = PyTuple_New(5);
 
-
-
 	for (ii = 0; ii < 5; ii++)
 	{
 		PyObject *pValue = PyFloat_FromDouble(atof(argv[ii+1]));
@@ -55,13 +53,13 @@ int main(
 		}
 
 	}
-	printf("made it here \n");	
+
 	if (!PyCallable_Check(py_func_GetBackgroundHubble))
 	{
 		printf("'get_background_hubble' not callable\n");
 		return 1;
 	}
-
+	
 	//py_func_hubble = get_background_hubble(*py_tuple_function_args)
 	py_func_Hubble = PyObject_Call(py_func_GetBackgroundHubble, py_tuple_Function_Args, NULL);
 
