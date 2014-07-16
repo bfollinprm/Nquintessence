@@ -598,7 +598,8 @@ int input_read_parameters(
   /** (a) background parameters */
 
   class_read_double("chi0", pba->chi0);
-  pba->hubble_func = NULL;
+  pba->pyDensity = NULL;
+  pba->pyPressure = NULL;
   class_read_double("m_chi_over_H0", pba->m_chi_over_H0);
     //pba->hubble_func = NULL;
 

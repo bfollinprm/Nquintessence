@@ -72,8 +72,8 @@ struct background
 
   double m_chi_over_H0; //the mass of the chi field over the estimate for H0 in the absence of chi
 
-  PyObject *hubble_func; //Python function to return the hubble rate at any redshift, including effects of the chi field.
-
+  PyObject *pyDensity; //Python function to return the background density at any redshift, including effects of the chi field.
+  PyObject *pyPressure; //Python function to return the background pressure at any redshift, including effects of the chi field.
 
   int N_ncdm;                            /**< Number of distinguishabe ncdm species */
   double * M_ncdm;                       /**<vector of masses of non-cold relic:

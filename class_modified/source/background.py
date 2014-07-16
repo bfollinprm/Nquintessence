@@ -9,11 +9,11 @@ from scipy.interpolate import interp1d
 class background():
 	def __init__(self, *args, **kwargs):
 		##unpack the args tuple
-		h = .7
-		omega_m = .12
-		omega_rad = 1e-5
-		chi0 = .2
-		mchi_over_H0 = 2
+		h = args[0]
+		omega_m = args[1]
+		omega_rad = args[2]
+		chi0 = args[3]
+		mchi_over_H0 = args[4]
 		self.c = 2.998e5 #km/s
 		self.kb = 8.6173e-5 #eV/K
 		_H0 = h * 1e2
@@ -35,7 +35,9 @@ class background():
 			self.step = step
 		except:
 			self.step = 0.005 ## per hubble time
-	def hubble(self,*args):
+
+
+	def density(self,*args):
 		if args:
 			try:
 				z = args[0]
@@ -44,55 +46,65 @@ class background():
 		else:
 			z = 0
 		if (self.cosmo['chi0'] == 0) or (z > self.z0):
-			H = self.cosmo['H0_guess'] * sqrt(self.cosmo['Omega_m'] * (1+z)**3 + self.cosmo['Omega_rad'] * (1+z)**4 + self.cosmo['Omega_L'])
-			return float(H)
+			density = self.cosmo['H0_guess']**2 * (self.cosmo['Omega_m'] * (1+z)**3 + self.cosmo['Omega_rad'] * (1+z)**4 + self.cosmo['Omega_L'])
+			return float(density)
 		else:
-			if hasattr(self, 'hubble_func') == True:
-				H =  self.hubble_func(z).tolist()
-				return float(H)
+			if hasattr(self, 'density_interpolated_func') == True:
+				density =  self.density_interpolated_func(z).tolist()
+				return float(density)
 			else:
 				##We need to do the integration
-				self.hubble_func = self.calc_hubble_rate()
-				H = self.hubble_func(z).tolist()
-				return float(H)
+				self.get_pressure_density_funcs()
+				density = self.density_interpolated_func(z).tolist()
+				return float(density)
+
 
 	def angular_diameter_distance(self, z):
-		Da = 1/(1+z) * quad(lambda x: 1.0/self.hubble(x), 0, z)[0]
+		Da = 1.0/(1+z) * quad(lambda x: 1.0/self.hubble(x), 0, z)[0]
 		return Da
 
-	def calc_hubble_rate(self):
+	def get_pressure_density_funcs(self):
 		y0 = array([self.z0, self.cosmo['chi0'], 0])
 		r = self._integrator().set_initial_value(y0)
 		zlist = [self.z0]
-		self.H = self._hofz(y0)
-		self.dH = self._dhofz(y0)
-		hlist = [self.H]
-
+		self.H = self._hofz(y0)		
+		pressure_list = [self._Pofz(y0)]
+		density_list = [self.H**2]
 		z = self.z0
 		while r.successful() and r.y[0] > 0:
 			r.integrate(r.t + self.step/max(self.H, 1.4*self.cosmo['mchi_over_H0']*self.cosmo['H0_guess']))  ## Sample at the fastest of two scales; hubble time or oscillation time w = sqrt(2m^2)
 			self.H = self._hofz(r.y)
-			self.dH = self._dhofz(r.y) 
+			self.P = self._Pofz(r.y)
+			self.rho = (self.H)**2
 			zlist.append(r.y[0])
-			hlist.append(self.H)
+			pressure_list.append(self.P)
+			density_list.append(self.rho)
 
-		hubble_array = array(hlist)[::-1]
+		density_array = array(density_list)[::-1]
+		pressure_array = array(pressure_list)[::-1]
 		redshift_array = array(zlist)[::-1]
 		##Interpolate
-		hubble_interpolated_func = interp1d(redshift_array, hubble_array, kind ='linear', copy = False)#, assume_sorted = True)
+		self.pressure_interpolated_func = interp1d(redshift_array, pressure_array, kind ='linear', copy = False)#, assume_sorted = True)
+		self.density_interpolated_func = interp1d(redshift_array, density_array, kind ='linear', copy = False)#, assume_sorted = True)
 
-		return hubble_interpolated_func
+		return 0
 
 
 
 
 	def _integrator(self):
-		integrator = ode(self._chi_field_eom)#, jac = self._chi_field_jacobian)
-		integrator.set_integrator('lsoda')#, with_jacobian = True)
-		#integrator.set_f_params(self)
-		#integrator.set_jac_params(self)
+		integrator = ode(self._chi_field_eom)
+		integrator.set_integrator('lsoda')
 		return integrator
 
+	def _Pofz(self, x):
+		Pressure = self.cosmo['H0_guess']**2 * (
+												self.cosmo['Omega_rad']/3.0 * (1 + x[0])**4
+												- self.cosmo['Omega_L']
+												+ x[2]**2/6.0/self.cosmo['H0_guess']**2
+												- self.cosmo['mchi_over_H0'] ** 2 *x[1]**2/3.0
+												)
+		return Pressure
 
 	def _hofz(self,x):
 		H = self.cosmo['H0_guess'] * sqrt(
@@ -103,15 +115,6 @@ class background():
 						)
 		return H
 
-	def _dhofz(self, x):
-		dH = self.cosmo['H0_guess'] / sqrt(
-						self.cosmo['Omega_m'] * ((1+x[0]))**3  	
-						+ self.cosmo['Omega_rad'] * ((1+x[0]))**4 	
-						+ self.cosmo['Omega_L']
-						+ self.cosmo['mchi_over_H0']**2 * x[1]**2/3.0 + x[2]**2/6.0/self.cosmo['H0_guess']**2 
-						)/2
-		return dH
-
 
 	def _chi_field_eom(self, t, x):
 		dy =array([
@@ -121,26 +124,35 @@ class background():
 			])
 		return dy
 
-	def _chi_field_jacobian(self, t, x):
-		jac = 0
-		return jac
 
-	def _check_for_hubble(self):
+	def pressure(self,*args):
+		if args:
+			try:
+				z = args[0]
+			except:
+				z = args
+		else:
+			z = 0
+		if (self.cosmo['chi0'] == 0) or (z > self.z0):
+			pressure = self.cosmo['H0_guess']**2  * (self.cosmo['Omega_rad']/3.0 * (1+z)**4 - self.cosmo['Omega_L'])
+			return float(pressure)
+		else:
+			if hasattr(self, 'pressure_interpolated_func') == True:
+				pressure =  self.pressure_interpolated_func(z).tolist()
+				return float(pressure)
+			else:
+				##We need to do the integration
+				self.get_pressure_density_funcs()
+				pressure = self.pressure_interpolated_func(z).tolist()
+				return float(pressure)
 
-				##Check temporary numpy file to see if the cosmology agrees
-		try:				
-			cosmo_test = load('tmp/cosmology.npz')
-			for key in cosmo_test.keys():
-				if (cosmo_test[key] != self.cosmo[key]):
-					return False
-				return True
-		except:
-			return False
 
+def get_background_density(*args, **kwargs):
+	background_class_instance = background(*args)
+	density = background_class_instance.density
+	return density
 
-
-def get_background_hubble(*args, **kwargs):
-	background_class_instance = background(args, kwargs)
-	hubble = background_class_instance.hubble
-	return hubble
-
+def get_background_pressure(*args, **kwargs):
+	background_class_instance = background(*args)
+	pressure = background_class_instance.pressure
+	return pressure

@@ -111,7 +111,7 @@
  * @param omega_rad                Input : physical total radiation density today: \Omega_rad h^2
  * @param chi0                     Input : initial value of the quintessent field (in planck units)
  * @param m_chi_over_H0            Input : mass of the chi field in units of the (approximate) hubble rate today sans chi field.
- * @function hubble_func           Output: PyObject pointer to bound python method for calculating hubble rate at any redshift (already allocated)
+ * @function pyDensity           Output: PyObject pointer to bound python method for calculating hubble rate at any redshift (already allocated)
 **/
 int true_hubble(
   double h,
@@ -119,11 +119,12 @@ int true_hubble(
   double omega_rad,
   double chi0,
   double m_chi_over_H0,
-  PyObject **hubble_func
+  PyObject **pyDensity,
+  PyObject **pyPressure
   )
 
 {
-  PyObject *py_module_Background, *py_dict_BackgroundLinkerAttributes, *py_func_GetBackgroundHubble, *py_tuple_Function_Args;
+  PyObject *py_module_Background, *py_dict_BackgroundLinkerAttributes, *py_func_GetBackgroundDensity, *py_func_GetBackgroundPressure, *py_tuple_Function_Args;
   int check;
   //include local path
   PyObject *sys = PyImport_ImportModule("sys");
@@ -139,16 +140,22 @@ int true_hubble(
 
   printf("imported module\n");
   py_dict_BackgroundLinkerAttributes = PyModule_GetDict(py_module_Background);
-  if (!PyDict_Contains(py_dict_BackgroundLinkerAttributes, PyString_FromString("get_background_hubble")))
+  if (!PyDict_Contains(py_dict_BackgroundLinkerAttributes, PyString_FromString("get_background_density")))
+  {
+    return 1;   
+  }
+  if (!PyDict_Contains(py_dict_BackgroundLinkerAttributes, PyString_FromString("get_background_pressure")))
   {
     return 1;   
   }
   //py_funce_GetBackgroundHubble = py_module_Background.get_background_hubble
-  py_func_GetBackgroundHubble = PyDict_GetItemString(py_dict_BackgroundLinkerAttributes, "get_background_hubble");
+  py_func_GetBackgroundDensity = PyDict_GetItemString(py_dict_BackgroundLinkerAttributes, "get_background_density");
+  py_func_GetBackgroundPressure= PyDict_GetItemString(py_dict_BackgroundLinkerAttributes, "get_background_pressure");
+
   py_tuple_Function_Args = PyTuple_New(5);
 
 
-printf("Args are h = %f, omega_m = %f, omega_rad = %f, chi0 = %f, m_chi_over_H0 = %f\n", h, omega_m, omega_rad, chi0, m_chi_over_H0);
+//printf("Args are h = %f, omega_m = %f, omega_rad = %f, chi0 = %f, m_chi_over_H0 = %f\n", h, omega_m, omega_rad, chi0, m_chi_over_H0);
   check = PyTuple_SetItem(py_tuple_Function_Args, 0, PyFloat_FromDouble(h));
   if (check)
   {
@@ -178,35 +185,36 @@ printf("Args are h = %f, omega_m = %f, omega_rad = %f, chi0 = %f, m_chi_over_H0 
 
 
 
-  if (!PyCallable_Check(py_func_GetBackgroundHubble))
+  if (!PyCallable_Check(py_func_GetBackgroundDensity))
   {
     return 1;
   }
-  printf("Defining hubble function\n");
-
+ 
+  if (!PyCallable_Check(py_func_GetBackgroundPressure))
+  {
+    return 1;
+  }
   //py_func_hubble = get_background_hubble(*py_tuple_function_args)
-  printf("Grabbing hubble function\n");
-  *hubble_func = PyObject_Call(py_func_GetBackgroundHubble, py_tuple_Function_Args,NULL);
+  *pyDensity = PyObject_Call(py_func_GetBackgroundDensity, py_tuple_Function_Args,NULL);
+  *pyPressure = PyObject_Call(py_func_GetBackgroundPressure, py_tuple_Function_Args,NULL);
 
-  if (!*hubble_func)
+  if (!*pyDensity)
     {
-      printf("hubble function is NULL\n");
       PyErr_Print();
+      return 1;
+    }
+  if (!*pyPressure)
+    {
+      PyErr_Print();
+      return 1;
     }
 
-  if (PyCallable_Check(*hubble_func))
-  {
-  printf("Testing hubble function call\n");
-  PyObject *pyhubble0 = PyObject_CallObject(*hubble_func, NULL);
-  printf("Turning result into double \n");
-  double hubble0 = PyFloat_AsDouble(pyhubble0);
-  printf("H0 is %f\n", hubble0);
-  }
 
   //CLEANUP:
   Py_XDECREF(py_module_Background);
   Py_XDECREF(py_dict_BackgroundLinkerAttributes);
-  Py_XDECREF(py_func_GetBackgroundHubble);
+  Py_XDECREF(py_func_GetBackgroundDensity);
+  Py_XDECREF(py_func_GetBackgroundPressure);
   Py_XDECREF(py_tuple_Function_Args);
 
 
@@ -521,30 +529,38 @@ int background_functions(
   // {
   //   printf("passed object not a tuple.  Boo.");
   // }
-  PyObject *pyHubble;
-  if (!pba->hubble_func)
+  PyObject *py_float_Density, *py_float_Pressure;
+  if (!pba->pyDensity)
   {
       true_hubble(
               pba->h, 
               (pba->Omega0_cdm + pba->Omega0_b)*pow(pba->h,2), 
-              (pba->Omega0_g + pba->Omega0_ur)*pow(pba->h,3),
+              (pba->Omega0_g + pba->Omega0_ur)*pow(pba->h,2),
               pba->chi0, 
               pba->m_chi_over_H0, 
-              &pba->hubble_func
+              &pba->pyDensity,
+              &pba->pyPressure
                 );
   }
-  if (PyCallable_Check(pba->hubble_func))
+  if (PyCallable_Check(pba->pyDensity))
   {
-    pyHubble = PyEval_CallObject(pba->hubble_func,tuple_args);//"(f)",redshift);  
-    //pyHubble = PyObject_CallObject(pba->hubble_func, NULL);
-    if(pyHubble == NULL)
-      {
-        PyErr_Print();
-      }
+    py_float_Density = PyEval_CallObject(pba->pyDensity,tuple_args);//"(f)",redshift);  
   }
-  pvecback[pba->index_bg_H] = PyFloat_AsDouble(pyHubble);//pvecback[pba->index_bg_H] = sqrt(rho_tot-pba->K/a/a);
+  if (PyCallable_Check(pba->pyPressure))
+  {
+    py_float_Pressure = PyEval_CallObject(pba->pyPressure,tuple_args);//"(f)",redshift);  
+  }
+
+
+  rho_tot = PyFloat_AsDouble(py_float_Density);
+  p_tot = PyFloat_AsDouble(py_float_Pressure);
 
   Py_XDECREF(tuple_args);
+  Py_XDECREF(py_float_Density);
+  Py_XDECREF(py_float_Pressure);
+
+
+  pvecback[pba->index_bg_H] = sqrt(rho_tot-pba->K/a/a);
 
   /** - compute derivative of H with respect to conformal time */
   pvecback[pba->index_bg_H_prime] = - (3./2.) * (rho_tot + p_tot) * a + pba->K/a;
@@ -730,7 +746,8 @@ int background_free(
                     ) {
   int k;
   printf("Ending Python Stuff\n");
-  Py_XDECREF(pba->hubble_func);
+  //Py_XDECREF(pba->pyDensity);
+  Py_XDECREF(pba->pyPressure);
   Py_Finalize();
   free(pba->tau_table);
   free(pba->z_table);
