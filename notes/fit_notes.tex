@@ -1,0 +1,253 @@
+%\pdfoutput=1
+\documentclass{emulateapj}
+% please leave aastex line (below) for purposes of regenerating bbl file
+%\documentclass[12pt,preprint2]{aastex}
+
+\usepackage{amsmath}
+\usepackage{natbib}
+\usepackage{graphicx}
+\usepackage{epsf}
+\usepackage{color}
+\usepackage{threeparttable}
+\usepackage{comment}
+\usepackage{epsfig}
+\usepackage{xspace}
+\usepackage[usenames,dvipsnames,svgnames]{xcolor}
+\bibliographystyle{fapj}
+\DeclareGraphicsExtensions{.jpg,.pdf,.png,.eps,.ps}
+
+\def\jcap{J. of Cosm. \& Astropart. Phys.}
+
+%% Definitions of useful commands
+ \newcommand{\sigT}{\mbox{$\sigma_{\mbox{\tiny T}}$}}
+ \newcommand{\Tcmb}{\mbox{$T_{\mbox{\tiny CMB}}$}}
+ \newcommand{\kB}{\mbox{$k_{\mbox{\tiny B}}$}}
+ \newcommand{\nH}{\mbox{$n_{\mbox{\tiny H}}$}}
+ \newcommand{\NH}{\mbox{$N_{\mbox{\tiny H}}$}}
+ \newcommand{\rhogas}{\mbox{$\rho_{\mbox{\scriptsize gas}}$}}
+ \newcommand{\Mgas}{\mbox{$M_{\mbox{\scriptsize gas}}$}}
+ \newcommand{\Mtot}{\mbox{$M_{\mbox{\scriptsize tot}}$}}
+ \newcommand{\fgas}{\mbox{$f_{\mbox{\scriptsize gas}}$}}
+ \newcommand{\LCDM}{\mbox{$\Lambda$CDM}\xspace}
+ \newcommand{\LCDMnospace}{\mbox{$\Lambda$CDM}}
+ \newcommand{\omk}{\mbox{$\Omega_{k}$}}
+ \newcommand{\rcore}{\mbox{$r_\mathrm{core}$}}
+ \newcommand{\thcore}{\mbox{$\theta_\mathrm{core}$}}
+ \newcommand{\thcoresq}{\mbox{$\theta^2_\mathrm{core}$}}
+ \newcommand{\ltsima}{$\; \buildrel < \over \sim \;$}
+ \newcommand{\ltsim}{\lower.5ex\hbox{\ltsima}}
+ \newcommand{\tbd}{{\bf \textcolor{red}{TBD}}}
+ \newcommand{\twentythree}{$23^\mathrm{h} 30^\mathrm{m}$}
+ \newcommand{\five}{$5^\mathrm{h} 30^\mathrm{m}$}
+ \newcommand{\atsz}{$A_{\rm tSZ}$}
+ \newcommand{\atszeqn}{A_{\rm tSZ}}
+ \newcommand{\atszcosm}{A_{\rm tSZ}}
+ \newcommand{\modelletter}{\Phi_\ell}
+ \newcommand{\modelnorm}{\Phi_{3000}}
+ \newcommand{\amplitudeletter}{D_{3000}^}
+ \newcommand{\hmsun}{h^{-1} \; M_{\odot}}
+ \newcommand{\sqdeg}{\ensuremath{\mathrm{deg}^2}}
+ \newcommand{\sze}{Sunyaev-Ze\v{l}dovich Effect}
+ \newcommand{\eg}{\textit{e.g.}}
+ \newcommand{\ie}{\textit{i.e.}}
+ \newcommand{\neff}{\ensuremath{N_\mathrm{eff}}\xspace}
+ \newcommand{\yhe}{\ensuremath{Y_p}}
+ \newcommand{\As}{\ensuremath{A_s}}
+ \newcommand{\deltaR}{\ensuremath{\Delta_R^2}}
+ \newcommand{\nrun}{\ensuremath{dn_s/d\ln k}\xspace}
+ \newcommand{\alens}{\ensuremath{A_{L}}}
+ \newcommand{\ns}{\ensuremath{n_{s}}}
+ \newcommand{\ho}{\ensuremath{H_{0}}\xspace}
+ \newcommand{\muksq}{\ensuremath{\mu{\rm K}^2}}
+ \newcommand{\sumnu}{\ensuremath{\Sigma m_\nu}\xspace} 
+ \newcommand{\wmap}{\textit{WMAP}\xspace} 
+ \newcommand{\wseven}{\textit{WMAP}7} 
+ 
+%%% Define numbers
+% ns
+ \newcommand{\nsCmb}{\ensuremath{0.9623\pm0.0097}}
+ \newcommand{\nsCmbHo}{\ensuremath{0.9638\pm0.0090}}
+ \newcommand{\nsCmbBao}{\ensuremath{0.9515\pm0.0082}}
+ \newcommand{\nsCmbHoBao}{\ensuremath{0.9538\pm0.0081}}
+
+ \newcommand{\nsCdfCmb}{\ensuremath{3.9}}
+ \newcommand{\nsCdfCmbHo}{\ensuremath{4.0}}
+ \newcommand{\nsCdfCmbBao}{\ensuremath{6.0}}
+ \newcommand{\nsCdfCmbHoBao}{\ensuremath{5.7}}
+ \newcommand{\nsCdfCmbHoBaoNeff}{\ensuremath{2.5}}
+
+ \newcommand{\nsProbCmb}{\ensuremath{4 \times 10^{-5}}}
+ \newcommand{\nsProbCmbHo}{\ensuremath{3.1 \times 10^{-5}}}
+ \newcommand{\nsProbCmbBao}{\ensuremath{1.1 \times 10^{-9}}}
+ \newcommand{\nsProbCmbHoBao}{\ensuremath{7.0 \times 10^{-9}}}
+ \newcommand{\nsProbCmbHoBaoNeff}{\ensuremath{6.1 \times 10^{-3}}}
+
+% alens
+ \newcommand{\alensCdfSpt}{\ensuremath{5.9}}
+ \newcommand{\alensProbSpt}{\ensuremath{1.3 \times 10^{-9}}}
+ \newcommand{\alensCdfCmb}{\ensuremath{8.1}}
+ \newcommand{\alensProbCmb}{\ensuremath{2.4 \times 10^{-16}}}
+ \newcommand{\alensCmb}{\ensuremath{0.86^{+0.15 (+0.30)}_{-0.13 (-0.25)}}}
+
+% omk
+ \newcommand{\omkCmb}{\ensuremath{-0.003^{+0.014}_{-0.018}}}
+ \newcommand{\omkCmbHo}{\ensuremath{0.0018\pm0.0048}}
+ \newcommand{\omkCmbBao}{\ensuremath{-0.0089\pm0.0043}}
+ \newcommand{\omkCmbHoBao}{\ensuremath{-0.0059\pm0.0040}}
+ \newcommand{\omlCdfCmb}{\ensuremath{5.4}}
+
+
+% mark-up
+\newcommand{\BF}{\textcolor{blue}{BRENT: }\textcolor{blue}}
+\newcommand{\EA}{\textcolor{green}{ETHAN: }\textcolor{green}}
+\newcommand{\LK}{\textcolor{orange}{LLOYD: }\textcolor{orange}}
+
+
+
+ \hyphenation{DSFG}
+ \hyphenation{DSFGs}
+ \hyphenation{SPT}
+ \hyphenation{CMB}
+ \hyphenation{LensPix}
+
+ \def\microKsq{\mu{\mbox{K}}^2}
+ \def \zero {\textsc{ra5h30dec-55}}
+ \def \one {\textsc{ra23h30dec-55}}
+ \def \three {\textsc{ra21hdec-60}}
+ \def \four {\textsc{ra3h30dec-60}}
+ \def \five {\textsc{ra21hdec-50}}
+ \def \six {\textsc{ra4h10dec-50}}
+ \def \seven {\textsc{ra0h50dec-50}}
+ \def \eight {\textsc{ra2h30dec-50}}
+ \def \nine {\textsc{ra1hdec-60}}
+ \def \ten {\textsc{ra5h30dec-45}}
+ \def \eleven {\textsc{ra6h30dec-55}}
+ \def \twelve {\textsc{ra23hdec-62.5}}
+ \def \thirteen {\textsc{ra21hdec-42.5}}
+ \def \fourteen {\textsc{ra22h30dec-55}}
+ \def \fifteen {\textsc{ra23hdec-45}}
+ \def \sixteen {\textsc{ra6hdec-62.5}}
+ \def \seventeen {\textsc{ra3h30dec-42.5}}
+ \def \eighteen {\textsc{ra1hdec-42.5}}
+ \def \nineteen {\textsc{ra6h30dec-45}}
+
+
+
+ \def\cl{$C_{\ell}$\xspace}
+ \def\clnospace{\ensuremath{C_{\ell}}}
+ \def\dl{$D_{\ell}$}
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+
+
+%====================================================================================
+\begin{document}
+
+\title{Oscillating Axions Notes}
+\author{Brent Follin}
+\maketitle
+
+
+\section{The Background}
+Our model is the $\Lambda$CDM cosmology with cold, pressureless dark matter, photons, 3 massless neutrino species, the standard baryon sector, and a cosmological constant, extended with a axionic field $\chi$.  The $\chi$ field evolves according to the standard equation for a scalar field in an expanding FRW cosmology,
+\begin{equation}
+\label{eq:scalarfield}
+\ddot{\chi} = - 3 H \dot{\chi} - V^\prime\left(\chi\right),
+\end{equation}
+with H the Hubble rate
+\begin{equation}
+\label{eq:hubblerate}
+H = \frac{\dot{a}}{a} = - \frac{\dot z}{1+z},
+\end{equation} 
+and potential $V\left(\chi\right) = m_{\chi}^2 \chi^2$ 
+The Hubble rate obeys the Friedmann equation:
+\begin{equation}
+\label{eq:Friedmann}
+H^2 = H^2_{0*} (\Omega_m (1+z)^3 + \Omega_{rad} (1+z)^4 + \Omega_\Lambda) + \frac{\rho_\chi\left(z\right)}{3M_p^2},
+\end{equation}
+with $M_p$ the reduced planck mass $\sqrt{8\pi G}$,  $\rho_\chi = V\left(\chi\right) + \frac{1}{2} \dot{\chi}^2$ the total energy density of the $\chi$ field at redshift $z$, $\Omega_m$ the energy density fraction of pressureless fluids, $\Omega_{rad}$ the energy density fraction of relativistic fluids, and $\Omega_\Lambda$ the energy density fraction of the cosmological constant.  The parameter $H^2_{0*}$ is the `reduced' Hubble rate today, given (as is implied in equation \ref{eq:Friedmann}) by 
+\begin{equation}
+H^2_{0*} = H^2_0 - \frac{\rho_\chi\left(z = 0\right)}{3M_p^2}
+\end{equation}
+The $\Omega_i$'s obey the summation rule 
+\begin{equation}
+\sum_i \Omega_i = 1.
+\end{equation}
+
+
+\subsection{Solving the Background}
+The background metric is given by
+\begin{equation}
+ds^2 = dt^2 - a^2(t)d\vec{x}^2,
+\end{equation}
+whose evolution is completely specified by the equation of motion for the scale factor $a(t)$:
+\begin{equation}
+\dot{a} = a H.
+\end{equation}
+Since the $\chi$ field is neither directly observable nor does it interact with other specie except through gravity, the background effects of the $\chi$ field are entirely specified by the Hubble rate $H(z)$.  We can formulate the Hamiltonian dynamics of background by introducing a new field $\phi \equiv \dot{\chi}$, after which we can write equation \ref{eq:scalarfield} and equation \ref{eq:hubblerate} as
+\begin{equation}
+\label{eq:hamiltonian}
+\left(
+\begin{array}{c}
+\dot{\left(1+z\right)} \\ \dot{\chi} \\ \dot{\phi}
+\end{array}\right) = \left[
+ \begin{array}{ccc}
+ -H & 0 & 0 \\
+ 0 & 0 & 1 \\
+ 0 & -m_\chi^2 & - 3 H \\
+ \end{array}
+ \right]
+ \left(
+ \begin{array}{c}
+1+z \\ \chi \\ \phi
+ \end{array}
+ \right)
+\end{equation}
+\\
+with H given by equation \ref{eq:Friedmann}.  Defining
+\begin{align*}
+\vec{x} &= \left(\begin{array}{c}
+\left(1+z\right) \\ \chi \\ \phi
+\end{array}\right) \\ 
+\hat{D} &=\left[
+ \begin{array}{ccc}
+ -H & 0 & 0 \\
+ 0 & 0 & 1 \\
+ 0 & -m_\chi^2 & - 3 H \\
+ \end{array}
+ \right] \\ 
+\vec{x}_0 &= \left(\begin{array}{c}
+\left(1+z_0\right) = 20\left(m_\chi / H_{0*}\right)^{2/3} \\ \chi_0 \\ \phi_0 = 0
+\end{array}\right) \\ 
+\end{align*}
+equation \ref{eq:hamiltonian} has the formal solution
+\begin{equation}
+\vec{x}(t) = e^{\hat{D}t}\vec{x}_0
+\end{equation}
+Analytically, this equation is solved through the implicit Adams method, implemented in Fortran, and sampled in time at timesteps given by 
+\begin{equation}
+t_i = t_{i-1} + \frac{0.005}{max\left(H(t_{i-1}), \sqrt{2} M_\chi \right)}
+\end{equation}
+to obtain histories $z(t_i)$ and $H(t_i)$.  The function $H(z)$ is then estimated as the linear interpolation of the ordered pairs $\left(H(t_i), z(t_i)\right)$, with $H(z > z_0)$ estimated by
+\begin{equation}
+H^2(z) = H^2_{0*} (\Omega_m (1+z)^3 + \Omega_{rad} (1+z)^4 + \Omega_\Lambda)
+\end{equation}  
+The background cosmology is totally specified by the parameters $\Omega_m$, $H_{0*}$, $\chi_0$, and $m_\chi$.
+
+\section{Perturbations}
+The Jeans length (deBroglie wavelength) of the axion field is nearly the horizon, so we can't have observable $\chi$ perturbations. We have
+\begin{equation}
+\lambda_J \sim (m_\chi v)^{-1} \sim m H \lambda_J 
+\end{equation} 
+or $\lambda_J \sim \frac{1}{\sqrt{m_\chi H}}$.  Since $m_\chi \lesssim H$ always, $\lambda_J \lesssim 1/H$, which is the horizon size.
+
+Therefore, the only effects to the perturbations are the changes to $H(z)$ due to the $\chi$ field solved above.  These changes for realistic models will be order $10\%$ or smaller, and since the hubble rate always appears in the perturbation equations multiplying something at least first order in the perturbative quantities, these effects are quite small.  Hence the dominant effects to the cosmology is the background, and we'll try to do a background-only fit to the cosmological data.
+
+\section{Fitting the Model}
+Here I'll outline what we've tried so far.
+\end{document}
+
+
+
+
