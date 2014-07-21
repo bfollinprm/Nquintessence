@@ -138,7 +138,7 @@ int true_hubble(
   //import background_linker as py_module_Background
   py_module_Background = PyImport_ImportModule("background");
 
-  printf("imported module\n");
+  //printf("imported module\n");
   py_dict_BackgroundLinkerAttributes = PyModule_GetDict(py_module_Background);
   if (!PyDict_Contains(py_dict_BackgroundLinkerAttributes, PyString_FromString("get_background_density")))
   {
@@ -614,7 +614,7 @@ int background_init(
 
   Py_Initialize();
   //setting the argument
-  printf("starting python stuff\n");
+  //printf("starting python stuff\n");
   /** - in verbose mode, provide some information */
   if (pba->background_verbose > 0) {
     printf("Running CLASS version %s\n",_VERSION_);
@@ -745,10 +745,10 @@ int background_free(
                     struct background *pba
                     ) {
   int k;
-  printf("Ending Python Stuff\n");
-  //Py_XDECREF(pba->pyDensity);
+  //printf("Ending Python Stuff\n");
+  Py_XDECREF(pba->pyDensity);
   Py_XDECREF(pba->pyPressure);
-  Py_Finalize();
+  //Py_Finalize();
   free(pba->tau_table);
   free(pba->z_table);
   free(pba->d2tau_dz2_table);
