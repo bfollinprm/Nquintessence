@@ -3094,6 +3094,7 @@ int input_try_unknown_parameters(double * unknown_parameter,
   }
   if (pfzw->required_computation_stage >= cs_background){
     class_call(background_free(&ba), ba.error_message, errmsg);
+    Py_Finalize();
   }
 
   /* Set filecontent to unread */

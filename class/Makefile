@@ -53,7 +53,8 @@ HYREC = hyrec
 CCFLAG += -D__CLASSDIR__='"$(MDIR)"'
 
 # where to find include files *.h
-INCLUDES = -I../include -I/Users/follin/projects/anaconda/include/python2.7 -I/Users/follin/projects/anaconda/include/python2.7
+INCLUDES = -I../include -I/usr/include/python2.7 -I/usr/include/x86_64-linux-gnu/python2.7
+#-I/Users/follin/projects/anaconda/include/python2.7 -I/Users/follin/projects/anaconda/include/python2.7
 
 # automatically add external programs if needed. First, initialize to blank.
 EXTERNAL =

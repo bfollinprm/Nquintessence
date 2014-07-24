@@ -211,11 +211,11 @@ int true_hubble(
 
 
   //CLEANUP:
-  Py_XDECREF(py_module_Background);
-  Py_XDECREF(py_dict_BackgroundLinkerAttributes);
-  Py_XDECREF(py_func_GetBackgroundDensity);
-  Py_XDECREF(py_func_GetBackgroundPressure);
-  Py_XDECREF(py_tuple_Function_Args);
+  //Py_XDECREF(py_module_Background);
+  //Py_XDECREF(py_dict_BackgroundLinkerAttributes);
+  //Py_XDECREF(py_func_GetBackgroundDensity);
+  //Py_XDECREF(py_func_GetBackgroundPressure);
+  //Py_XDECREF(py_tuple_Function_Args);
 
 
   return 0;
@@ -555,9 +555,9 @@ int background_functions(
   rho_tot = PyFloat_AsDouble(py_float_Density);
   p_tot = PyFloat_AsDouble(py_float_Pressure);
 
-  Py_XDECREF(tuple_args);
-  Py_XDECREF(py_float_Density);
-  Py_XDECREF(py_float_Pressure);
+  //Py_XDECREF(tuple_args);
+  //Py_XDECREF(py_float_Density);
+  //Py_XDECREF(py_float_Pressure);
 
 
   pvecback[pba->index_bg_H] = sqrt(rho_tot-pba->K/a/a);
@@ -746,8 +746,8 @@ int background_free(
                     ) {
   int k;
   //printf("Ending Python Stuff\n");
-  Py_XDECREF(pba->pyDensity);
-  Py_XDECREF(pba->pyPressure);
+  //Py_XDECREF(pba->pyDensity);
+  //Py_XDECREF(pba->pyPressure);
   //Py_Finalize();
   free(pba->tau_table);
   free(pba->z_table);
@@ -787,6 +787,8 @@ int background_free(
       if(pba->ncdm_psd_parameters!=NULL)  free(pba->ncdm_psd_parameters);
     }
   }
+  //printf("How about now?\n");
+  //Py_Finalize();
   return _SUCCESS_;
 }
 
