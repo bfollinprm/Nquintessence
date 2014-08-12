@@ -612,7 +612,7 @@ int background_init(
   double rho_ncdm_rel,rho_nu_rel;
   int filenum=0;
 
-  Py_Initialize();
+  //Py_Initialize();
   //setting the argument
   //printf("starting python stuff\n");
   /** - in verbose mode, provide some information */
