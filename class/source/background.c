@@ -211,11 +211,11 @@ int true_hubble(
 
 
   //CLEANUP:
-  //Py_XDECREF(py_module_Background);
-  //Py_XDECREF(py_dict_BackgroundLinkerAttributes);
-  //Py_XDECREF(py_func_GetBackgroundDensity);
-  //Py_XDECREF(py_func_GetBackgroundPressure);
-  //Py_XDECREF(py_tuple_Function_Args);
+  Py_XDECREF(py_module_Background);
+  Py_XDECREF(py_dict_BackgroundLinkerAttributes);
+  Py_XDECREF(py_func_GetBackgroundDensity);
+  Py_XDECREF(py_func_GetBackgroundPressure);
+  Py_XDECREF(py_tuple_Function_Args);
 
 
   return 0;
