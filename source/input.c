@@ -598,7 +598,6 @@ int input_read_parameters(
   /** (a) background parameters */
 
   class_read_double("chi0", pba->chi0);
-  //Py_Initialize();
   pba->pyDensity = NULL;
   pba->pyPressure = NULL;
   class_read_double("m_chi_over_H0", pba->m_chi_over_H0);
@@ -3095,9 +3094,8 @@ int input_try_unknown_parameters(double * unknown_parameter,
   }
   if (pfzw->required_computation_stage >= cs_background){
     class_call(background_free(&ba), ba.error_message, errmsg);
-    //Py_Finalize();
   }
-  //Py_Finalize();
+
   /* Set filecontent to unread */
   for (i=0; i<pfzw->fc.size; i++) {
     pfzw->fc.read[i] = _FALSE_;

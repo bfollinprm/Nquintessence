@@ -597,13 +597,6 @@ int input_read_parameters(
 
   /** (a) background parameters */
 
-  class_read_double("chi0", pba->chi0);
-  //Py_Initialize();
-  pba->pyDensity = NULL;
-  pba->pyPressure = NULL;
-  class_read_double("m_chi_over_H0", pba->m_chi_over_H0);
-    //pba->hubble_func = NULL;
-
   /* scale factor today (arbitrary) */
   class_read_double("a_today",pba->a_today);
 
@@ -665,7 +658,6 @@ int input_read_parameters(
   }
 
   Omega_tot = pba->Omega0_g;
-
 
   /* Omega_0_b (baryons) */
   class_call(parser_read_double(pfc,"Omega_b",&param1,&flag1,errmsg),
@@ -826,8 +818,6 @@ int input_read_parameters(
         pba->m_ncdm_in_eV[n]=1.e-5;
       }
     }
-
-
 
     /* Check if filenames for interpolation tables are given: */
     class_read_list_of_integers_or_default("use_ncdm_psd_files",pba->got_files,_FALSE_,N_ncdm);
@@ -3095,9 +3085,8 @@ int input_try_unknown_parameters(double * unknown_parameter,
   }
   if (pfzw->required_computation_stage >= cs_background){
     class_call(background_free(&ba), ba.error_message, errmsg);
-    //Py_Finalize();
   }
-  //Py_Finalize();
+
   /* Set filecontent to unread */
   for (i=0; i<pfzw->fc.size; i++) {
     pfzw->fc.read[i] = _FALSE_;
