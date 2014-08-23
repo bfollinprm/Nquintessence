@@ -216,6 +216,8 @@ int true_hubble(
   Py_XDECREF(py_func_GetBackgroundDensity);
   Py_XDECREF(py_func_GetBackgroundPressure);
   Py_XDECREF(py_tuple_Function_Args);
+  Py_XDECREF(sys);
+  Py_XDECREF(path);
 
 
   return 0;
@@ -555,9 +557,9 @@ int background_functions(
   rho_tot = PyFloat_AsDouble(py_float_Density);
   p_tot = PyFloat_AsDouble(py_float_Pressure);
 
-  //Py_XDECREF(tuple_args);
-  //Py_XDECREF(py_float_Density);
-  //Py_XDECREF(py_float_Pressure);
+  Py_XDECREF(tuple_args);
+  Py_XDECREF(py_float_Density);
+  Py_XDECREF(py_float_Pressure);
 
 
   pvecback[pba->index_bg_H] = sqrt(rho_tot-pba->K/a/a);
@@ -782,6 +784,8 @@ int background_free(
       free(pba->Omega0_ncdm);
       free(pba->m_ncdm_in_eV);
       free(pba->factor_ncdm);
+      Py_XDECREF(pba->pyDensity);
+      Py_XDECREF(pba->pyPressure);
       if(pba->got_files!=NULL) free(pba->got_files);
       if(pba->ncdm_psd_files!=NULL)  free(pba->ncdm_psd_files);
       if(pba->ncdm_psd_parameters!=NULL)  free(pba->ncdm_psd_parameters);
