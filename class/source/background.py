@@ -71,7 +71,7 @@ class background():
 		pressure_list = [self._Pofz(y0)]
 		density_list = [self.H**2]
 		z = self.z0
-		while r.successful() and r.y[0] > 0:
+		while r.successful() and r.y[0] > -1:
 			r.integrate(r.t + self.step/max(self.H, 1.4*self.cosmo['mchi_over_H0']*self.cosmo['H0_guess']))  ## Sample at the fastest of two scales; hubble time or oscillation time w = sqrt(2m^2)
 			self.H = self._hofz(r.y)
 			self.P = self._Pofz(r.y)

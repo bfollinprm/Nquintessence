@@ -211,6 +211,7 @@ int true_hubble(
 
 
   //CLEANUP:
+  //printf("cleaning up hubble method\n");
   Py_XDECREF(py_module_Background);
   Py_XDECREF(py_dict_BackgroundLinkerAttributes);
   Py_XDECREF(py_func_GetBackgroundDensity);
@@ -407,6 +408,8 @@ int background_functions(
   rho_r=0.;
   rho_m=0.;
   a_rel = a / pba->a_today;
+  //printf("a today is %e", pba->a_today);
+  //printf(" and a is %e\n", a);
 
   class_test(a_rel <= 0.,
              pba->error_message,
@@ -557,6 +560,7 @@ int background_functions(
   rho_tot = PyFloat_AsDouble(py_float_Density);
   p_tot = PyFloat_AsDouble(py_float_Pressure);
 
+  //printf("cleaning up local variables \n");
   Py_XDECREF(tuple_args);
   Py_XDECREF(py_float_Density);
   Py_XDECREF(py_float_Pressure);
@@ -784,6 +788,7 @@ int background_free(
       free(pba->Omega0_ncdm);
       free(pba->m_ncdm_in_eV);
       free(pba->factor_ncdm);
+      //printf("cleaning up background structure\n");
       Py_XDECREF(pba->pyDensity);
       Py_XDECREF(pba->pyPressure);
       if(pba->got_files!=NULL) free(pba->got_files);
